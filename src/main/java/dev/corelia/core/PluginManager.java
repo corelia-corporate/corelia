@@ -74,7 +74,6 @@ public class PluginManager {
                 throw new PluginException("Current class is not a Plugin: " + mainClass);
             }
 
-            // Ensure PluginInfo is set even for no-arg constructed plugins
             plugin.init(info);
 
             Logger.registerPluginClassLoader(pcl, info.name());
