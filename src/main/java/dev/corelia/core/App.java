@@ -14,7 +14,7 @@ public class App {
 
         System.out.println("Plugins loaded successfully :");
         for (Plugin p : pm.getPlugins()) {
-            System.out.println(" - " + p.getDescription());
+            System.out.println(" - " + p.getInfo().name());
         }
     }
 }

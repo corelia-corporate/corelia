@@ -2,14 +2,16 @@ package dev.corelia.api;
 
 import java.util.Objects;
 
-public final class PluginDescription {
+public final class PluginInfo {
     private final String name;
     private final String version;
+    private final String description;
     private final String mainClass;
 
-    public PluginDescription(String name, String version, String mainClass) {
+    public PluginInfo(String name, String version, String description, String mainClass) {
         this.name = Objects.requireNonNull(name);
         this.version = Objects.requireNonNull(version);
+        this.description = Objects.requireNonNull(description);
         this.mainClass = Objects.requireNonNull(mainClass);
     }
 
@@ -19,6 +21,10 @@ public final class PluginDescription {
 
     public String version() {
         return version;
+    }
+
+    public String description() {
+        return description;
     }
 
     public String mainClass() {

@@ -1,9 +1,19 @@
 package dev.corelia.api;
 
-public interface Plugin {
-    void onLoad() throws Exception;
-    void onEnable() throws Exception;
-    void onDisable() throws Exception;
+public abstract class Plugin {
+    private final PluginInfo info;
 
-    PluginDescription getDescription();
+    protected Plugin(PluginInfo info) {
+        this.info = info;
+    }
+
+    public PluginInfo getInfo() {
+        return info;
+    }
+
+    public abstract void onLoad() throws Exception;
+
+    public abstract void onEnable() throws Exception;
+
+    public abstract void onDisable() throws Exception;
 }
