@@ -1,7 +1,5 @@
 package dev.corelia.core;
 
-import dev.corelia.api.Plugin;
-
 import java.nio.file.Path;
 
 public class App {
