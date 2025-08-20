@@ -60,13 +60,23 @@ public class PluginManager {
             URL jarUrl = jarPath.toUri().toURL();
             PluginClassLoader pcl = new PluginClassLoader(jarUrl, getClass().getClassLoader());
             Class<?> main = Class.forName(mainClass, true, pcl);
-            var constructor = main.getDeclaredConstructor(PluginInfo.class);
-            constructor.setAccessible(true);
-            Object obj = constructor.newInstance(info);
+            Object obj;
+            try {
+                var noArg = main.getDeclaredConstructor();
+                noArg.setAccessible(true);
+                obj = noArg.newInstance();
+            } catch (NoSuchMethodException e) {
+                var ctor = main.getDeclaredConstructor(PluginInfo.class);
+                ctor.setAccessible(true);
+                obj = ctor.newInstance(info);
+            }
             if (!(obj instanceof Plugin plugin)) {
                 pcl.close();
                 throw new PluginException("Current class is not a Plugin: " + mainClass);
             }
+
+            // Ensure PluginInfo is set even for no-arg constructed plugins
+            plugin.init(info);
 
             Logger.registerPluginClassLoader(pcl, info.name());
             boolean success = false;
