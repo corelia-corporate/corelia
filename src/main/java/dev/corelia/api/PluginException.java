@@ -5,6 +5,7 @@ public class PluginException extends Exception {
         super(message);
     }
 
+    @SuppressWarnings("unused")
     public PluginException(String message, Throwable cause) {
         super(message, cause);
     }
