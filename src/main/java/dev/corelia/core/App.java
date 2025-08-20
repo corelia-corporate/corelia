@@ -13,8 +13,5 @@ public class App {
         pm.enableAll();
 
         System.out.println("Plugins loaded successfully :");
-        for (Plugin p : pm.getPlugins()) {
-            System.out.println(" - " + p.getInfo().name());
-        }
     }
 }

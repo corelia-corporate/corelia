@@ -43,9 +43,9 @@ public class PluginManager {
         for (LoadedPlugin lp : plugins.values()) {
             try {
                 lp.instance.onEnable();
-                Logger.info("[PluginManager] Enabled: " + lp.instance.getInfo().description());
+                Logger.info("Enabled: " + lp.instance.getInfo().description());
             } catch (Exception e) {
-                Logger.warn("[PluginManager] Fail to enabled " + lp.info.name() + ": " + e.getMessage());
+                Logger.warn("Fail to enabled " + lp.info.name() + ": " + e.getMessage());
                 e.printStackTrace();
             }
         }
@@ -57,11 +57,13 @@ public class PluginManager {
         for (LoadedPlugin lp : reverse) {
             try {
                 lp.instance.onDisable();
-                Logger.info("[PluginManager] Disabled: " + lp.instance.getInfo().description());
+                Logger.info("Disabled: " + lp.instance.getInfo().description());
             } catch (Exception e) {
-                Logger.warn("[PluginManager] Fail to disabled " + lp.info.name() + ": " + e.getMessage());
+                Logger.warn("Fail to disabled " + lp.info.name() + ": " + e.getMessage());
             }
             try {
+                // Unregister before closing the classloader
+                Logger.unregisterPluginClassLoader(lp.classLoader);
                 lp.classLoader.close();
             } catch (Exception ignored) {
             }
@@ -98,15 +100,28 @@ public class PluginManager {
                 throw new PluginException("Current class is not a Plugin: " + mainClass);
             }
 
-            plugin.onLoad();
-            Logger.info("[PluginManager] Loaded: " + description + " from " + jarPath.getFileName());
-
-            LoadedPlugin lp = new LoadedPlugin(info, plugin, pcl);
-            if (plugins.containsKey(info.name())) {
-                pcl.close();
-                throw new PluginException("A plugin with the name '" + info.name() + "' is already loaded.");
+            // Register loader so logs from onLoad/onEnable are tagged with [PluginName]
+            Logger.registerPluginClassLoader(pcl, info.name());
+            boolean success = false;
+            try {
+                plugin.onLoad();
+                Logger.info("Loaded: " + name);
+                LoadedPlugin lp = new LoadedPlugin(info, plugin, pcl);
+                if (plugins.containsKey(info.name())) {
+                    // Rollback registration before throwing
+                    Logger.unregisterPluginClassLoader(pcl);
+                    pcl.close();
+                    throw new PluginException("A plugin with the name '" + info.name() + "' is already loaded.");
+                }
+                plugins.put(info.name(), lp);
+                success = true;
+            } finally {
+                if (!success) {
+                    // If onLoad or subsequent steps failed, clean registration and close loader
+                    Logger.unregisterPluginClassLoader(pcl);
+                    try { pcl.close(); } catch (Exception ignored) {}
+                }
             }
-            plugins.put(info.name(), lp);
         }
     }
 
