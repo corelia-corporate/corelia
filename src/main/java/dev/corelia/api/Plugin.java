@@ -5,20 +5,21 @@ import java.util.Objects;
 public abstract class Plugin {
     private PluginInfo info;
 
-    // Allow subclasses to omit constructors
-    protected Plugin() {}
+    @SuppressWarnings("unused")
+    protected Plugin() {
+    }
 
-    // Backward compatibility for existing plugins
+    @SuppressWarnings("unused")
     protected Plugin(PluginInfo info) {
         this.info = Objects.requireNonNull(info, "info");
     }
 
-    // Called by the plugin loader when using the no-arg constructor path
     public final void init(PluginInfo info) {
-        if (this.info != null) return; // already initialized
+        if (this.info != null) return;
         this.info = Objects.requireNonNull(info, "info");
     }
 
+    @SuppressWarnings("unused")
     public PluginInfo getInfo() {
         return info;
     }
