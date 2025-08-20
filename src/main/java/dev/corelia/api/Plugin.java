@@ -12,8 +12,4 @@ public abstract class Plugin {
     }
 
     public abstract void onLoad() throws Exception;
-
-    public abstract void onEnable() throws Exception;
-
-    public abstract void onDisable() throws Exception;
 }

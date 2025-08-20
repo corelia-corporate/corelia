@@ -10,8 +10,5 @@ public class App {
         PluginManager pm = new PluginManager(pluginsDir);
 
         pm.loadAll();
-        pm.enableAll();
-
-        System.out.println("Plugins loaded successfully :");
     }
 }

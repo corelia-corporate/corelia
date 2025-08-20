@@ -39,38 +39,6 @@ public class PluginManager {
         }
     }
 
-    public void enableAll() {
-        for (LoadedPlugin lp : plugins.values()) {
-            try {
-                lp.instance.onEnable();
-                Logger.info("Enabled: " + lp.instance.getInfo().description());
-            } catch (Exception e) {
-                Logger.warn("Fail to enabled " + lp.info.name() + ": " + e.getMessage());
-                e.printStackTrace();
-            }
-        }
-    }
-
-    public void disableAll() {
-        List<LoadedPlugin> reverse = new ArrayList<>(plugins.values());
-        Collections.reverse(reverse);
-        for (LoadedPlugin lp : reverse) {
-            try {
-                lp.instance.onDisable();
-                Logger.info("Disabled: " + lp.instance.getInfo().description());
-            } catch (Exception e) {
-                Logger.warn("Fail to disabled " + lp.info.name() + ": " + e.getMessage());
-            }
-            try {
-                // Unregister before closing the classloader
-                Logger.unregisterPluginClassLoader(lp.classLoader);
-                lp.classLoader.close();
-            } catch (Exception ignored) {
-            }
-        }
-        plugins.clear();
-    }
-
     private void loadPlugin(Path jarPath) throws Exception {
         if (!Files.isRegularFile(jarPath)) return;
 
@@ -100,7 +68,6 @@ public class PluginManager {
                 throw new PluginException("Current class is not a Plugin: " + mainClass);
             }
 
-            // Register loader so logs from onLoad/onEnable are tagged with [PluginName]
             Logger.registerPluginClassLoader(pcl, info.name());
             boolean success = false;
             try {
@@ -108,7 +75,6 @@ public class PluginManager {
                 Logger.info("Loaded: " + name);
                 LoadedPlugin lp = new LoadedPlugin(info, plugin, pcl);
                 if (plugins.containsKey(info.name())) {
-                    // Rollback registration before throwing
                     Logger.unregisterPluginClassLoader(pcl);
                     pcl.close();
                     throw new PluginException("A plugin with the name '" + info.name() + "' is already loaded.");
@@ -117,7 +83,6 @@ public class PluginManager {
                 success = true;
             } finally {
                 if (!success) {
-                    // If onLoad or subsequent steps failed, clean registration and close loader
                     Logger.unregisterPluginClassLoader(pcl);
                     try { pcl.close(); } catch (Exception ignored) {}
                 }
