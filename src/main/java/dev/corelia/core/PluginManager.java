@@ -32,8 +32,7 @@ public class PluginManager {
                 try {
                     loadPlugin(jar);
                 } catch (Exception e) {
-                    Logger.warn("Fail to load " + jar.getFileName() + ": " + e.getMessage());
-                    e.printStackTrace();
+                    Logger.error("Fail to load " + jar.getFileName() + ": " + e.getMessage());
                 }
             }
         }
@@ -94,7 +93,10 @@ public class PluginManager {
             } finally {
                 if (!success) {
                     Logger.unregisterPluginClassLoader(pcl);
-                    try { pcl.close(); } catch (Exception ignored) {}
+                    try {
+                        pcl.close();
+                    } catch (Exception ignored) {
+                    }
                 }
             }
         }
@@ -127,6 +129,7 @@ public class PluginManager {
         return result;
     }
 
+    @SuppressWarnings("unused")
     public Collection<Plugin> getPlugins() {
         List<Plugin> list = new ArrayList<>();
         for (LoadedPlugin lp : plugins.values()) list.add(lp.instance);
