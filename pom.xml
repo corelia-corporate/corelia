@@ -7,7 +7,7 @@
     <groupId>dev.corelia</groupId>
     <artifactId>corelia</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <packaging>pom</packaging>
+    <packaging>jar</packaging>
 
     <properties>
         <maven.compiler.source>24</maven.compiler.source>
