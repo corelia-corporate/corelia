@@ -76,18 +76,18 @@ public class PluginManager {
 
             plugin.init(info);
 
-            Logger.registerPluginClassLoader(pcl, info.name());
+            Logger.registerPluginClassLoader(pcl, info.getName());
             boolean success = false;
             try {
                 plugin.onLoad();
                 Logger.info("Loaded: " + name);
                 LoadedPlugin lp = new LoadedPlugin(info, plugin, pcl);
-                if (plugins.containsKey(info.name())) {
+                if (plugins.containsKey(info.getName())) {
                     Logger.unregisterPluginClassLoader(pcl);
                     pcl.close();
-                    throw new PluginException("A plugin with the name '" + info.name() + "' is already loaded.");
+                    throw new PluginException("A plugin with the name '" + info.getName() + "' is already loaded.");
                 }
-                plugins.put(info.name(), lp);
+                plugins.put(info.getName(), lp);
                 success = true;
             } finally {
                 if (!success) {

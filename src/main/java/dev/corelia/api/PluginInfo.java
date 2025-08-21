@@ -15,19 +15,19 @@ public final class PluginInfo {
         this.mainClass = Objects.requireNonNull(mainClass);
     }
 
-    public String name() {
+    public String getName() {
         return name;
     }
 
-    public String version() {
+    public String getVersion() {
         return version;
     }
 
-    public String description() {
+    public String getDescription() {
         return description;
     }
 
-    public String mainClass() {
+    public String getMainClass() {
         return mainClass;
     }
 
