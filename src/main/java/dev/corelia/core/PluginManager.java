@@ -20,8 +20,14 @@ public class PluginManager {
     private final Path pluginsDir;
     private final Map<String, LoadedPlugin> plugins = new LinkedHashMap<>();
 
+    PluginEventBus eventBus;
+
     public PluginManager(Path pluginsDir) {
         this.pluginsDir = Objects.requireNonNull(pluginsDir);
+    }
+
+    public void setEventBus(PluginEventBus eventBus) {
+        this.eventBus = Objects.requireNonNull(eventBus);
     }
 
     public void loadAll() throws Exception {
@@ -80,6 +86,7 @@ public class PluginManager {
             boolean success = false;
             try {
                 plugin.onLoad();
+                eventBus.registerPlugin(plugin);
                 Logger.info("Loaded: " + name);
                 LoadedPlugin lp = new LoadedPlugin(info, plugin, pcl);
                 if (plugins.containsKey(info.getName())) {
